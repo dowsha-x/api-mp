@@ -22,7 +22,7 @@ class UserCreate(BaseModel):
     @validator('phone')
     def validate_phone(cls, v):
         try:
-            p = phonenumbers.parse(v, 'RU')  # или ваша страна
+            p = phonenumbers.parse(v, 'RU')
             if not phonenumbers.is_valid_number(p):
                 raise ValueError('Invalid phone number')
         except Exception:
@@ -38,12 +38,12 @@ class UserRead(BaseModel):
     phone: str
     is_superuser: bool
 
-    model_config = {
-        "from_attributes": True,
-        "arbitrary_types_allowed": True
-    }
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
 
 
 class UserLogin(BaseModel):
+    """Схема для логина пользователя."""
     email: EmailStr
     password: SecretStr

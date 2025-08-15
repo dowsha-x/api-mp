@@ -1,6 +1,5 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import Response
 
 from core.security import decode_access_token
 from services.user import get_user_by_id

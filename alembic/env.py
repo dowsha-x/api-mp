@@ -7,6 +7,8 @@ from alembic import context
 from dotenv import load_dotenv
 
 from db.base import Base
+from models.user import User
+from models.blogs import Blog
 
 load_dotenv()
 
