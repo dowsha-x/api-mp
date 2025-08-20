@@ -1,0 +1,267 @@
+[2025-08-19 16:09:24,526] [ERROR] [app] - Глобальная ошибка на GET /blogs: (sqlite3.OperationalError) no such table: blogs
+[SQL: SELECT blogs.id, blogs.title, blogs.text, blogs.image, blogs.slug, blogs.created_at, blogs.updated_at, blogs.is_deleted, blogs.author_id, blogs.category_id 
+FROM blogs 
+WHERE blogs.is_deleted = 0
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 149, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 300, in _handle_exception
+    raise error
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 131, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 122, in _execute
+    return await future
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 105, in run
+    result = function()
+sqlite3.OperationalError: no such table: blogs
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 187, in __call__
+    recv_stream.close()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_utils.py", line 83, in collapse_excgroups
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/alex/Desktop/Dev/api_mp/middleware/auth.py", line 22, in dispatch
+    response = await call_next(request)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/fastapi/routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/alex/Desktop/Dev/api_mp/routers/blog.py", line 44, in list_blogs
+    return await get_blogs(
+  File "/Users/alex/Desktop/Dev/api_mp/services/blog.py", line 89, in get_blogs
+    result = await session.execute(stmt)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/ext/asyncio/session.py", line 463, in execute
+    result = await greenlet_spawn(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 149, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 300, in _handle_exception
+    raise error
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 131, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 122, in _execute
+    return await future
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 105, in run
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: blogs
+[SQL: SELECT blogs.id, blogs.title, blogs.text, blogs.image, blogs.slug, blogs.created_at, blogs.updated_at, blogs.is_deleted, blogs.author_id, blogs.category_id 
+FROM blogs 
+WHERE blogs.is_deleted = 0
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-08-19 16:28:29,755] [ERROR] [app] - Глобальная ошибка на GET /blogs: (sqlite3.OperationalError) no such table: blogs
+[SQL: SELECT blogs.id, blogs.title, blogs.text, blogs.image, blogs.slug, blogs.created_at, blogs.updated_at, blogs.is_deleted, blogs.author_id, blogs.category_id 
+FROM blogs 
+WHERE blogs.is_deleted = 0
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 149, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 300, in _handle_exception
+    raise error
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 131, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 122, in _execute
+    return await future
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 105, in run
+    result = function()
+sqlite3.OperationalError: no such table: blogs
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 187, in __call__
+    recv_stream.close()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_utils.py", line 83, in collapse_excgroups
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/alex/Desktop/Dev/api_mp/middleware/auth.py", line 22, in dispatch
+    response = await call_next(request)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/fastapi/routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/alex/Desktop/Dev/api_mp/routers/blog.py", line 44, in list_blogs
+    return await get_blogs(
+  File "/Users/alex/Desktop/Dev/api_mp/services/blog.py", line 89, in get_blogs
+    result = await session.execute(stmt)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/ext/asyncio/session.py", line 463, in execute
+    result = await greenlet_spawn(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 201, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 149, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 300, in _handle_exception
+    raise error
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 131, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 122, in _execute
+    return await future
+  File "/Users/alex/Desktop/Dev/api_mp/venv/lib/python3.9/site-packages/aiosqlite/core.py", line 105, in run
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: blogs
+[SQL: SELECT blogs.id, blogs.title, blogs.text, blogs.image, blogs.slug, blogs.created_at, blogs.updated_at, blogs.is_deleted, blogs.author_id, blogs.category_id 
+FROM blogs 
+WHERE blogs.is_deleted = 0
+ LIMIT ? OFFSET ?]
+[parameters: (10, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-08-19 16:34:54,148] [INFO] [app] - Получено 0 блогов)
+[2025-08-19 16:35:19,538] [INFO] [app] - Получено 0 блогов)
+[2025-08-19 16:38:44,365] [INFO] [app] - Получено 0 блогов)
+[2025-08-19 16:38:44,410] [INFO] [app] - Получено 0 категорий
+[2025-08-19 18:58:47,708] [INFO] [app] - Получено 0 блогов)
+[2025-08-19 18:58:47,745] [INFO] [app] - Создана категория: test_category (id=1)
+[2025-08-19 18:58:47,751] [INFO] [app] - Получено 1 категорий

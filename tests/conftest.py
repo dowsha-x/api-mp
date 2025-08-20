@@ -1,52 +1,50 @@
-import os
 import pytest
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
+from sqlalchemy.pool import StaticPool
 
-# Явно задаем URL для тестов, если .env не загрузился
-TEST_DB_URL = os.getenv(
-    'TEST_DATABASE_URL',
-    'postgresql+asyncpg://test_user:test_api_mp_password@localhost:5432/test_api_mp_db'
-)
+from main import app
+from db.base import Base
+from db.session import get_db
 
-@pytest.fixture(scope="session")
-async def test_db_engine():
-    """Фикстура асинхронного подключения к БД с проверкой URL"""
-    assert TEST_DB_URL, "TEST_DATABASE_URL не задан"
-    assert "asyncpg" in TEST_DB_URL, "Используйте asyncpg в TEST_DATABASE_URL"
-    
+
+@pytest.fixture(scope="module")
+async def async_session():
+    """
+    Фикстура для создания асинхронной сессии SQLAlchemy с in-memory SQLite.
+
+    Особенности:
+    - Используется SQLite в памяти (sqlite+aiosqlite:///:memory:),
+    чтобы не трогать реальную базу.
+    - Таблицы создаются автоматически перед тестами через
+    Base.metadata.create_all.
+    - Патчит зависимость FastAPI `get_db`,
+    чтобы эндпоинты использовали тестовую сессию.
+    - После завершения всех тестов соединение закрывается (engine.dispose).
+
+    Возвращает:
+        sessionmaker для создания AsyncSession внутри тестов.
+    """
     engine = create_async_engine(
-        TEST_DB_URL,
-        echo=True,
-        pool_size=5,
-        max_overflow=10
+        "sqlite+aiosqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+        echo=True
     )
-    
-    # Проверка подключения
-    async with engine.begin() as conn:
-        await conn.execute(text("SELECT 1"))
-    
-    yield engine
-    await engine.dispose()
 
-@pytest.fixture
-async def db_session(test_db_engine):
-    """Фикстура асинхронной сессии с автоматическим откатом"""
-    async with test_db_engine.begin() as conn:
-        Session = sessionmaker(
-            bind=conn,
-            class_=AsyncSession,
-            expire_on_commit=False
-        )
-        async with Session() as session:
-            # Создаем тестовые таблицы
-            await conn.run_sync(lambda sync_conn: sync_conn.execute(text(
-                """CREATE TABLE IF NOT EXISTS test_users (
-                    id SERIAL PRIMARY KEY,
-                    email VARCHAR(255) UNIQUE NOT NULL
-                )"""
-            )))
-            
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async_session_maker = sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
+
+    async def _get_session():
+        async with async_session_maker() as session:
             yield session
-            await session.rollback()
+
+    app.dependency_overrides[get_db] = _get_session
+
+    yield async_session_maker
+
+    await engine.dispose()
