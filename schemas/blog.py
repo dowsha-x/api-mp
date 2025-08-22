@@ -3,11 +3,20 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from schemas.user import UserRead
 from schemas.category import CategoryRead
+from schemas.user import UserRead
 
 
 class BlogCreate(BaseModel):
+    """
+    Схема для создания нового поста блога.
+    Поля:
+    - title: заголовок поста
+    - text: содержание поста
+    - slug: уникальный URL-идентификатор
+    - category_id: ID категории
+    - image: URL изображения (необязательно)
+    """
     title: str
     text: str
     slug: str
@@ -19,6 +28,19 @@ class BlogCreate(BaseModel):
 
 
 class BlogRead(BaseModel):
+    """
+    Схема для чтения поста блога.
+    Поля:
+    - id: идентификатор поста
+    - title: заголовок
+    - text: содержание
+    - image: URL изображения
+    - slug: уникальный URL
+    - created_at: дата создания
+    - updated_at: дата обновления
+    - author: данные автора (UserRead)
+    - category: данные категории (CategoryRead)
+    """
     id: int
     title: str
     text: str
@@ -34,6 +56,15 @@ class BlogRead(BaseModel):
 
 
 class BlogUpdate(BaseModel):
+    """
+    Схема для обновления поста блога.
+    Поля:
+    - title: заголовок
+    - text: содержание
+    - image: URL изображения (необязательно)
+    - category_id: ID категории (необязательно)
+    - slug: уникальный URL
+    """
     title: str
     text: str
     image: Optional[str] = None

@@ -7,9 +7,8 @@ Create Date: 2025-07-30 14:39:20.906747
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '8d6011f0ef9a'
@@ -24,9 +23,6 @@ def upgrade():
         sa.Column('is_deleted', sa.Boolean(), nullable=False, server_default=sa.text('false'))
     )
     op.alter_column('blogs', 'is_deleted', server_default=None)
-
-def downgrade():
-    op.drop_column('blogs', 'is_deleted')
 
 
 def downgrade() -> None:

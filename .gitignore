@@ -1,5 +1,53 @@
-venv/
+# Python
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
 *.pyc
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDE/Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sqlite3
+*.db
+*.db-journal
+
+# Migrations (если генерируешь автоматически, например Alembic)
+migrations/versions/
+
+# Test / Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Environment variables
 .env
-.env.test
+.env.*
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+*.pid
+*.seed
+
+# S3 / temporary uploads
+*.tmp
+tmp/

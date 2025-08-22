@@ -5,6 +5,15 @@ from db.base import Base
 
 
 class Category(Base):
+    """
+    Модель категории блога.
+
+    Атрибуты:
+        id: Уникальный идентификатор категории.
+        name: Название категории.
+        slug: Уникальный URL-идентификатор категории.
+        blogs: Список блогов, относящихся к категории.
+    """
     __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

@@ -1,9 +1,17 @@
-from pydantic import BaseModel, EmailStr, SecretStr, field_validator, validator
 import phonenumbers
+from pydantic import BaseModel, EmailStr, SecretStr, field_validator, validator
 
 
 class UserCreate(BaseModel):
-    """Схема для создания пользователя с валидацией пароля."""
+    """
+    Схема для создания пользователя с валидацией пароля и телефона.
+
+    Поля:
+    - name: имя пользователя
+    - email: email пользователя
+    - phone: телефон пользователя (валидируется по формату)
+    - password: пароль пользователя (минимум 8 символов)
+    """
     name: str
     email: EmailStr
     phone: str
@@ -24,14 +32,23 @@ class UserCreate(BaseModel):
         try:
             p = phonenumbers.parse(v, 'RU')
             if not phonenumbers.is_valid_number(p):
-                raise ValueError('Invalid phone number')
-        except Exception:
-            raise ValueError('Invalid phone number format')
+                raise ValueError('Неверный номер телефона')
+        except Exception as e:
+            raise ValueError('Неверный формат номера телефона') from e
         return v
 
 
 class UserRead(BaseModel):
-    """Схема пользователя для ответа."""
+    """
+    Схема пользователя для ответа API.
+
+    Поля:
+    - id: уникальный идентификатор пользователя
+    - name: имя пользователя
+    - email: email пользователя
+    - phone: телефон пользователя
+    - is_superuser: флаг суперпользователя
+    """
     id: int
     name: str
     email: EmailStr
@@ -44,6 +61,12 @@ class UserRead(BaseModel):
 
 
 class UserLogin(BaseModel):
-    """Схема для логина пользователя."""
+    """
+    Схема для логина пользователя.
+
+    Поля:
+    - email: email пользователя
+    - password: пароль пользователя
+    """
     email: EmailStr
     password: SecretStr

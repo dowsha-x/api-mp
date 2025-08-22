@@ -1,4 +1,5 @@
 from celery import Celery
+
 from core.config import settings
 
 celery_app = Celery(
@@ -6,7 +7,5 @@ celery_app = Celery(
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND
 )
-
-import tasks.email
 
 celery_app.autodiscover_tasks(["tasks"])

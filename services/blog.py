@@ -1,11 +1,11 @@
-import tempfile
 import os
-from typing import Optional, List
+import tempfile
+from typing import List, Optional
 
-from sqlalchemy import select, and_, false
+from sqlalchemy import and_, false, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import text
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql import text
 
 from core.celery import celery_app
 from core.config import settings
@@ -20,7 +20,13 @@ async def create_blog(
         blog_data: BlogCreate,
         author_id: int
 ) -> Blog:
-    """Создание статьи для блога."""
+    """
+    Создает новый блог в базе данных.
+
+    Проверяет уникальность слага, создает запись в БД,
+    коммитит изменения и возвращает объект с загруженными связями
+    (автор и категория).
+    """
     stmt = select(Blog).where(Blog.slug == blog_data.slug)
     result = await session.execute(stmt)
     existing = result.scalar_one_or_none()
@@ -64,7 +70,19 @@ async def get_blogs(
     category_id: Optional[int] = None,
     search: Optional[str] = None
 ) -> List[Blog]:
-    """Получение списка блогов с фильтрацией, поиском и пагинацией."""
+    """
+    Получение списка блогов с фильтрацией, поиском и пагинацией.
+
+    Args:
+        session: сессия SQLAlchemy.
+        page_number: номер страницы.
+        page_size: количество записей на странице.
+        category_id: фильтр по категории.
+        search: поисковая строка для заголовка и текста блога.
+
+    Returns:
+        Список объектов Blog с загруженными связями (автор и категория).
+    """
     stmt = select(Blog).options(
         selectinload(Blog.category),
         selectinload(Blog.author)
@@ -94,6 +112,12 @@ async def get_blogs(
 
 async def delete_blog(
         session: AsyncSession, blog_id: int, user_id: int) -> None:
+    """
+    Логическое удаление блога (is_deleted=True).
+
+    Проверяет, существует ли блог и является текущий пользователь его автором.
+    Если проверка не пройдена, вызывает ValueError или PermissionError.
+    """
     stmt = select(Blog).where(Blog.id == blog_id)
     result = await session.execute(stmt)
     blog = result.scalar_one_or_none()
@@ -123,6 +147,12 @@ async def update_blog(
     user_id: int,
     blog_data: BlogUpdate
 ) -> Blog:
+    """
+    Обновляет блог с проверкой прав пользователя.
+
+    Проверяет существование записи, права автора, уникальность нового слага,
+    обновляет поля и возвращает объект с подгруженными связями.
+    """
     stmt = select(Blog).where(
         Blog.id == blog_id,
         Blog.is_deleted.is_(False)
@@ -175,7 +205,11 @@ async def update_blog(
 
 @celery_app.task
 async def upload_to_s3_task(file_content: bytes, filename: str) -> str:
-    """Фоновая загрузка файла в S3"""
+    """
+    Фоновая загрузка файла в S3.
+
+    Создает временный файл, загружает его в S3 и возвращает публичный URL.
+    """
     try:
         s3 = S3Client(
             access_key=settings.ACCESS_KEY,
@@ -184,7 +218,10 @@ async def upload_to_s3_task(file_content: bytes, filename: str) -> str:
             bucket_name=settings.BUCKET_NAME,
         )
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=filename) as tmp_file:
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=filename
+        ) as tmp_file:
             tmp_file.write(file_content)
             tmp_path = tmp_file.name
 
@@ -207,7 +244,12 @@ async def create_blog_task(
     image_url: str,
     author_id: int
 ) -> int:
-    """Фоновая задача создания блога"""
+    """
+    Фоновая задача для создания блога.
+
+    Создает блог в базе данных с переданными параметрами
+    и возвращает ID нового блога.
+    """
     from db.session import SessionLocal
 
     async with SessionLocal() as session:

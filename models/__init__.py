@@ -1,4 +1,4 @@
-from .user import User
 from .blogs import Blog
+from .user import User
 
 __all__ = ["User", "Blog"]

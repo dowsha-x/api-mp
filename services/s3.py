@@ -1,11 +1,21 @@
-from contextlib import asynccontextmanager
 import uuid
+from contextlib import asynccontextmanager
 
 from aiobotocore.session import get_session
 from fastapi import UploadFile
 
 
 class S3Client:
+    """
+    Асинхронный клиент для работы с S3-подобным хранилищем.
+
+    Args:
+        access_key (str): AWS Access Key.
+        secret_key (str): AWS Secret Key.
+        endpoint_url (str): URL S3-совместимого сервера.
+        bucket_name (str): Название бакета.
+    """
+
     def __init__(
             self,
             access_key: str,
@@ -23,10 +33,26 @@ class S3Client:
 
     @asynccontextmanager
     async def get_client(self):
+        """
+        Асинхронный контекстный менеджер для S3 клиента.
+
+        Usage:
+            async with s3_client.get_client() as client:
+                # работа с client
+        """
         async with self.session.create_client("s3", **self.config) as client:
             yield client
 
     async def upload_file(self, file: UploadFile) -> str:
+        """
+        Загружает файл в S3 и возвращает публичный URL.
+
+        Args:
+            file (UploadFile): Загружаемый файл FastAPI.
+
+        Returns:
+            str: Публичный URL загруженного файла.
+        """
         unique_suffix = str(uuid.uuid4())
         object_name = f"{unique_suffix}_{file.filename}"
 
@@ -39,4 +65,8 @@ class S3Client:
                 Body=contents
             )
 
-        return f"{self.config['endpoint_url'].rstrip('/')}/{self.bucket_name}/{object_name}"
+        return (
+            f"{self.config['endpoint_url'].rstrip('/')}/"
+            f"{self.bucket_name}/"
+            f"{object_name}"
+        )

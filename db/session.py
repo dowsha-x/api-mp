@@ -1,6 +1,6 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-from db.engine import engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from db.engine import engine
 
 SessionLocal = async_sessionmaker(
     bind=engine,
@@ -10,5 +10,6 @@ SessionLocal = async_sessionmaker(
 
 
 async def get_db() -> AsyncSession:
+    """Асинхронный генератор сессий базы данных для Dependency Injection."""
     async with SessionLocal() as session:
         yield session

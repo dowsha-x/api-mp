@@ -1,6 +1,22 @@
-version: '3.8'
-
 services:
+  # Основная БД
+  db:
+    image: postgres:16
+    container_name: api_mp_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      retries: 5
+
+  # RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -10,3 +26,56 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+  # Backend FastAPI
+  backend:
+    build: .
+    container_name: api_mp_backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    volumes:
+      - .:/app
+
+  # Celery Worker
+  celery_worker:
+    build: .
+    container_name: api_mp_celery
+    command: celery -A core.celery.celery_app worker --loglevel=info
+    env_file: .env
+    restart: always
+    depends_on:
+      - backend
+      - rabbitmq
+      - db
+    volumes:
+      - .:/app
+
+  # Flower (мониторинг Celery)
+  flower:
+    build: .
+    container_name: api_mp_flower
+    command: celery -A core.celery.celery_app flower --port=5555 --address=0.0.0.0 --broker=${CELERY_BROKER_URL}
+    env_file: .env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - rabbitmq
+      - celery_worker
+    volumes:
+      - .:/app
+  
+  # Сервис MailHog
+  mailhog:
+    image: mailhog/mailhog
+    container_name: api_mp_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  db_data:

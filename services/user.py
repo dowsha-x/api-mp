@@ -1,23 +1,26 @@
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.logger import logger
+from core.security import hash_password, verify_password
 from models.user import User
 from schemas.user import UserCreate
-from core.security import hash_password, verify_password
-from core.logger import logger
 
 
 async def get_user_by_email(
         session: AsyncSession, email: str) -> Optional[User]:
-    """Получение пользователя по EMAIL."""
+    """
+    Возвращает пользователя по email или None, если пользователь не найден.
+    """
     stmt = select(User).where(User.email == email)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
 
 
 async def create_user(session: AsyncSession, user_data: UserCreate) -> User:
-    """Создание нового пользователя."""
+    """Создаёт нового пользователя в базе данных и возвращает его объект."""
     hashed_pwd = hash_password(user_data.password.get_secret_value())
     user = User(
         name=user_data.name,
@@ -38,19 +41,26 @@ async def create_user(session: AsyncSession, user_data: UserCreate) -> User:
 
 
 def check_password(plain_password: str, hashed_password: str) -> bool:
-    """Проверка пароля пользователя."""
+    """
+    Проверяет соответствие переданного пароля
+    и хешированного пароля пользователя.
+    """
     return verify_password(plain_password, hashed_password)
 
 
 async def get_user_by_id(
         session: AsyncSession, user_id: int) -> Optional[User]:
-    """Получение пользователя по ID."""
+    """Возвращает пользователя по ID или None, если пользователь не найден."""
     stmt = select(User).where(User.id == user_id)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
 
 
-async def get_user_by_phone(session: AsyncSession, phone: str) -> User:
-    """Получение пользователя по номеру телефона."""
+async def get_user_by_phone(
+        session: AsyncSession, phone: str) -> Optional[User]:
+    """
+    Возвращает пользователя по номеру телефона или None,
+    если пользователь не найден.
+    """
     result = await session.execute(select(User).where(User.phone == phone))
     return result.scalars().first()
